@@ -26,6 +26,12 @@ function authMiddleware(req, res, next) {
     });
 }
 
+const delayMiddleware = (req, res, next) => {
+    setTimeout(() => {
+        next();
+    }, 1000);
+};
+
 // utils
 function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
@@ -55,7 +61,7 @@ let users = [
     }
 ];
 
-app.post("/login", (req, res) => {
+app.post("/login", delayMiddleware, (req, res) => {
     const {email, password} = req.body;
 
     const user = users.find(
@@ -82,7 +88,7 @@ app.post("/login", (req, res) => {
     }
 });
 
-app.get("/profile", authMiddleware, (req, res) => {
+app.get("/profile", authMiddleware, delayMiddleware, (req, res) => {
     const {id} = req.user;
     const user = users.find(user => user.id == id);
     if (user) {
@@ -97,7 +103,7 @@ app.get("/profile", authMiddleware, (req, res) => {
     }
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", delayMiddleware, (req, res) => {
     const {username, email, password} = req.body;
 
     // Валидация
@@ -140,7 +146,7 @@ app.post("/register", (req, res) => {
     });
 });
 
-app.patch("/profile", authMiddleware, (req, res) => {
+app.patch("/profile", authMiddleware, delayMiddleware, (req, res) => {
     const {username, email, password, about, avatar} = req.body;
     const {id} = req.user;
 
